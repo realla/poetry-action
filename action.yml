@@ -1,0 +1,18 @@
+name: 'Poetry action'
+author: 'Barnaby Gray'
+description: 'Install poetry'
+inputs:
+  poetry-version:
+    description: 'poetry version'
+    required: false
+    default: '1.1.5'
+runs:
+  using: "composite"
+  steps:
+    - name: Install poetry
+      shell: bash
+      run: |
+        pip install poetry==${{ inputs.poetry-version }}
+        poetry config virtualenvs.create true
+        poetry config cache-dir ~/.poetry
+        poetry config virtualenvs.path ~/.poetry/venv
