@@ -9,10 +9,19 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Cache poetry install
+      uses: actions/cache@v2
+      id: pip-cache
+      with:
+        path: ${{ env.pythonLocation }}
+        key: ${{ runner.os }}-python-${{ env.pythonLocation }}-pip-poetry-${{ inputs.poetry-version }}
+
     - name: Install poetry
       shell: bash
       run: |
-        pip install poetry==${{ inputs.poetry-version }}
+        if [ "${{ steps.pip-cache.outputs.cache-hit }}" != "true" ]; then
+          pip install poetry==${{ inputs.poetry-version }}
+        fi
         poetry config virtualenvs.create true
         poetry config cache-dir ~/.poetry
         poetry config virtualenvs.path ~/.poetry/venv
@@ -22,10 +31,13 @@ runs:
       id: poetry-cache
       with:
         path: ~/.poetry/venv
-        key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+        key: ${{ runner.os }}-python-${{ env.pythonLocation }}-poetry-${{ hashFiles('poetry.lock') }}
         restore-keys: |
-          ${{ runner.os }}-poetry-
+          ${{ runner.os }}-python-${{ env.pythonLocation }}-poetry-
 
     - name: Install dependencies
-      run: poetry install
       shell: bash
+      run: |
+        if [ "${{ steps.poetry-cache.outputs.cache-hit }}" != "true" ]; then
+          poetry install
+        fi
