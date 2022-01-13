@@ -35,9 +35,9 @@ runs:
       id: poetry-cache
       with:
         path: ~/.poetry/venv
-        key: ${{ runner.os }}-python-${{ env.pythonLocation }}-poetry-${{ hashFiles(format('{0}/poetry.lock', inputs.working-directory)) }}
+        key: ${{ runner.os }}-python-${{ env.pythonLocation }}-poetry-${{ inputs.working-directory }}-${{ hashFiles(format('{0}/poetry.lock', inputs.working-directory)) }}
         restore-keys: |
-          ${{ runner.os }}-python-${{ env.pythonLocation }}-poetry-
+          ${{ runner.os }}-python-${{ env.pythonLocation }}-poetry-${{ inputs.working-directory }}-
 
     - name: Install dependencies
       shell: bash
