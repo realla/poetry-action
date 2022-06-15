@@ -47,8 +47,9 @@ runs:
           poetry install
         fi
 
-    - name: Add virtualenv to PATH
+    - name: Set environment variables
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: |
         echo $(poetry env info -p)/bin >> $GITHUB_PATH
+        echo "VIRTUAL_ENV=$(poetry env info -p)" >> $GITHUB_ENV
